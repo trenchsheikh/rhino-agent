@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docs — Rhino</title>
+<meta name="description" content="Documentation for Rhino: setup, personas, guardrails, x402 payments, and Robinhood Chain.">
+<link rel="icon" href="favicon-64.png" type="image/png" sizes="64x64">
+<link rel="icon" href="favicon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="shortcut icon" href="favicon-64.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0a;
+    --bg-soft: #111111;
+    --ink: #f5f4f0;
+    --ink-soft: rgba(245,244,240,0.62);
+    --ink-faint: rgba(245,244,240,0.34);
+    --lime: #ccff02;
+    --lime-dim: rgba(204,255,2,0.14);
+    --line: rgba(245,244,240,0.14);
+    --line-soft: rgba(245,244,240,0.07);
+    --ease: cubic-bezier(.19,1,.22,1);
+    --header-h: 78px;
+    --font-display: 'Times New Roman', Times, Georgia, serif;
+    --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --sidebar-w: 240px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; background:var(--bg); }
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); font-size:16px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+  ::selection{ background:var(--lime); color:#0a0a0c; }
+  a{ color:inherit; text-decoration:none; }
+  h1,h2,h3,h4{ font-family:var(--font-display); font-weight:400; letter-spacing:-0.01em; line-height:1.15; }
+  button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+  code, pre, .mono, .kicker, .toc a, .foot-meta{ font-family:var(--font-mono); }
+
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(10,10,10,0.92); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:none;
+    box-shadow:
+      0 8px 24px -8px rgba(0,0,0,0.85),
+      0 18px 40px -16px rgba(0,0,0,0.65),
+      0 2px 0 rgba(204,255,2,0.06);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1280px; margin:0 auto; padding:0 40px; gap:16px;
+    height:var(--header-h);
+  }
+  .logo{ display:flex; align-items:center; gap:0; font-family:var(--font-display); margin:-18px 0; }
+  .logo-img{ width:110px; height:110px; object-fit:contain; flex-shrink:0; display:block; mix-blend-mode:screen; }
+  
+  
+  .nav-mid{ display:flex; gap:28px; align-items:center; }
+  .nav-mid a{ font-size:14px; color:var(--ink-soft); transition:color .25s var(--ease); }
+  .nav-mid a:hover, .nav-mid a.active{ color:var(--ink); }
+  .nav-mid a.active{ color:var(--lime); }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:10px 20px; border-radius:100px; font-size:14px; font-weight:500;
+    border:1px solid var(--line); min-height:42px; transition:all .3s var(--ease);
+  }
+  .btn-lime{ background:var(--lime); color:#0a0a0a; border-color:var(--lime); }
+  .btn-lime:hover{ background:#e2ff5c; }
+  .btn-line{ color:var(--ink); }
+  .btn-line:hover{ border-color:var(--ink); }
+  .menu-btn{
+    display:none; width:44px; height:44px; align-items:center; justify-content:center;
+    border:1px solid var(--line); border-radius:8px;
+  }
+  .menu-btn span, .menu-btn span::before, .menu-btn span::after{
+    display:block; width:18px; height:1.5px; background:currentColor; position:relative;
+  }
+  .menu-btn span::before, .menu-btn span::after{ content:''; position:absolute; left:0; }
+  .menu-btn span::before{ top:-6px; }
+  .menu-btn span::after{ top:6px; }
+
+  .docs-shell{
+    display:grid; grid-template-columns:var(--sidebar-w) minmax(0,1fr);
+    max-width:1280px; margin:0 auto; padding:calc(var(--header-h) + 28px) 40px 80px;
+    gap:48px; align-items:start;
+  }
+  .toc{
+    position:sticky; top:calc(var(--header-h) + 24px);
+    border-right:1px solid var(--line-soft); padding-right:24px;
+  }
+  .toc .label{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:18px;
+  }
+  .toc ul{ list-style:none; display:flex; flex-direction:column; gap:4px; }
+  .toc a{
+    display:block; font-size:13px; color:var(--ink-soft); padding:8px 10px;
+    border-left:2px solid transparent; transition:color .2s, border-color .2s, background .2s;
+  }
+  .toc a:hover{ color:var(--ink); }
+  .toc a.active{ color:var(--lime); border-left-color:var(--lime); background:var(--lime-dim); }
+
+  .docs-main{ max-width:720px; padding-bottom:40px; }
+  .docs-hero{ margin-bottom:48px; padding-bottom:36px; border-bottom:1px solid var(--line-soft); }
+  .kicker{
+    font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--lime);
+    margin-bottom:16px; display:block;
+  }
+  .docs-hero h1{ font-size:clamp(36px, 6vw, 56px); margin-bottom:18px; }
+  .docs-hero p{ color:var(--ink-soft); font-size:17px; max-width:520px; }
+
+  .doc-section{ padding:48px 0; border-bottom:1px solid var(--line-soft); scroll-margin-top:calc(var(--header-h) + 24px); }
+  .doc-section:last-of-type{ border-bottom:none; }
+  .doc-section h2{ font-size:clamp(26px, 4vw, 34px); margin-bottom:16px; }
+  .doc-section h3{ font-size:22px; margin:28px 0 12px; }
+  .doc-section p{ color:var(--ink-soft); margin-bottom:16px; }
+  .doc-section ul, .doc-section ol{ color:var(--ink-soft); margin:0 0 16px 1.2em; }
+  .doc-section li{ margin-bottom:8px; }
+  .doc-section strong{ color:var(--ink); font-weight:500; }
+  .doc-section a.inline{ color:var(--lime); border-bottom:1px solid rgba(204,255,2,0.35); }
+  .doc-section a.inline:hover{ border-bottom-color:var(--lime); }
+
+  .callout{
+    border:1px solid var(--line); background:var(--bg-soft); padding:18px 20px; margin:22px 0;
+  }
+  .callout .t{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--lime); margin-bottom:8px; }
+  .callout p{ margin:0; font-size:14.5px; }
+
+  pre{
+    background:var(--bg-soft); border:1px solid var(--line); padding:18px 20px;
+    overflow-x:auto; font-size:13px; line-height:1.7; color:var(--ink-soft); margin:18px 0;
+  }
+  pre .c{ color:var(--ink-faint); }
+  pre .g{ color:var(--lime); }
+  code{ font-size:0.92em; background:var(--lime-dim); color:var(--lime); padding:1px 6px; }
+
+  .cmd-grid{ display:grid; gap:1px; background:var(--line); border:1px solid var(--line); margin:22px 0; }
+  .cmd-row{ display:grid; grid-template-columns:160px 1fr; gap:16px; background:var(--bg); padding:14px 16px; }
+  .cmd-row .cmd{ font-family:var(--font-mono); font-size:13px; color:var(--lime); }
+  .cmd-row .desc{ font-size:14px; color:var(--ink-soft); }
+
+  .faq details{
+    border-top:1px solid var(--line-soft); padding:16px 0;
+  }
+  .faq details:last-child{ border-bottom:1px solid var(--line-soft); }
+  .faq summary{
+    cursor:pointer; list-style:none; font-family:var(--font-display); font-size:18px;
+    display:flex; justify-content:space-between; gap:16px; align-items:center;
+  }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:var(--font-mono); color:var(--lime); font-size:18px; }
+  .faq details[open] summary::after{ content:'–'; }
+  .faq details p{ margin-top:12px; margin-bottom:0; }
+
+  .docs-cta{
+    margin-top:40px; padding:36px; border:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between;
+  }
+  .docs-cta h3{ font-size:26px; margin-bottom:6px; }
+  .docs-cta p{ color:var(--ink-soft); font-size:14.5px; margin:0; }
+  .docs-cta .actions{ display:flex; gap:12px; flex-wrap:wrap; }
+
+  footer{
+    border-top:1px solid var(--line-soft); padding:28px 40px 40px;
+    max-width:1280px; margin:0 auto;
+  }
+  .foot-meta{ font-size:12px; color:var(--ink-faint); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
+  .mobile-toc{
+    display:none; position:fixed; inset:var(--header-h) 0 0 0; z-index:99;
+    background:rgba(10,10,10,0.98); padding:24px 22px; overflow:auto;
+  }
+  body.toc-open .mobile-toc{ display:block; }
+  body.toc-open{ overflow:hidden; }
+
+  @media (max-width: 900px){
+    :root{ --header-h: 70px; }
+    .logo-img{ width:96px; height:96px; }
+    nav{ padding:0 18px; }
+    .menu-btn{ display:inline-flex; }
+    .docs-shell{ grid-template-columns:1fr; padding:calc(var(--header-h) + 24px) 18px 60px; gap:0; }
+    .toc{ display:none; }
+    .cmd-row{ grid-template-columns:1fr; gap:6px; }
+    .docs-cta{ padding:24px; }
+    footer{ padding:24px 18px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo" aria-label="Rhino"><img class="logo-img" src="rhino.png" alt="Rhino" width="110" height="110"></a>
+    <div class="nav-mid">
+      <a href="index.html">Home</a>
+      <a href="docs.html" class="active">Docs</a>
+      <a href="docs.html#start">Getting started</a>
+      <a href="docs.html#x402">x402</a>
+      <a href="docs.html#faq">FAQ</a>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a href="index.html#cta" class="btn btn-lime">Deploy an agent</a>
+      <button class="menu-btn" id="tocBtn" type="button" aria-label="Open docs menu"><span aria-hidden="true"></span></button>
+    </div>
+  </nav>
+</header>
+
+<div class="mobile-toc" id="mobileToc" hidden>
+  <p class="kicker" style="margin-bottom:16px;">On this page</p>
+  <div class="toc" style="position:static; border:none; padding:0;">
+    <ul>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#personas">Personas</a></li>
+      <li><a href="#funding">Funding &amp; cards</a></li>
+      <li><a href="#guardrails">Guardrails</a></li>
+      <li><a href="#commands">Telegram commands</a></li>
+      <li><a href="#x402">x402 payments</a></li>
+      <li><a href="#chain">Robinhood Chain</a></li>
+      <li><a href="#security">Security model</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="docs-shell">
+  <aside class="toc" aria-label="Documentation sections">
+    <p class="label">On this page</p>
+    <ul>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#personas">Personas</a></li>
+      <li><a href="#funding">Funding &amp; cards</a></li>
+      <li><a href="#guardrails">Guardrails</a></li>
+      <li><a href="#commands">Telegram commands</a></li>
+      <li><a href="#x402">x402 payments</a></li>
+      <li><a href="#chain">Robinhood Chain</a></li>
+      <li><a href="#security">Security model</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </aside>
+
+  <article class="docs-main">
+    <div class="docs-hero">
+      <span class="kicker">Documentation</span>
+      <h1>Run Rhino.<br>Supervise from Telegram.</h1>
+      <p>Everything you need to deploy an agent, fund its card, set guardrails, and understand how settlement works on Robinhood Chain.</p>
+    </div>
+
+    <section class="doc-section" id="start">
+      <h2>Getting started</h2>
+      <p>Rhino sets up entirely inside Telegram. You never need a dashboard open for the agent to keep working.</p>
+      <ol>
+        <li>Open <strong>@rhino_agent</strong> on Telegram and start a chat.</li>
+        <li>Pick a persona (or write your own).</li>
+        <li>Fund the agent’s dedicated card.</li>
+        <li>Set spend caps and approval thresholds.</li>
+        <li>Step back — Rhino trades and reports in the same chat.</li>
+      </ol>
+      <div class="callout">
+        <div class="t">First trade tip</div>
+        <p>Start with a small daily limit and an approval threshold. Raise them once you’ve watched a few cycles.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="personas">
+      <h2>Personas</h2>
+      <p>A persona is the agent’s thesis, temperament, and risk preference. Rhino uses it on every sizing and rebalance decision.</p>
+      <h3>Presets</h3>
+      <ul>
+        <li><strong>The Analyst</strong> — measured entries, low turnover, weeks-long horizon.</li>
+        <li><strong>The Degen</strong> — high velocity, tight stops, liquidity-aware sizing.</li>
+        <li><strong>The Guardian</strong> — drawdown-first, concentration checks, months-long horizon.</li>
+      </ul>
+      <h3>Custom</h3>
+      <p>Write a short thesis, name it, and attach risk rules. Rhino runs that configuration exactly — nothing else leaks into its decision loop.</p>
+<pre><span class="c">// lock a preset</span>
+<span class="g">/persona set analyst</span>
+
+<span class="c">// or define your own</span>
+<span class="g">/persona create "night-ops"</span>
+<span class="g">/persona thesis "rotate into liquid large-caps on vol spikes"</span>
+</pre>
+    </section>
+
+    <section class="doc-section" id="funding">
+      <h2>Funding &amp; cards</h2>
+      <p>Every Rhino agent gets its own funded card tied to a dedicated account. The agent cannot see or spend from your other balances.</p>
+      <ul>
+        <li>Fund with USDC (or supported stables on Robinhood Chain).</li>
+        <li>The card number is masked in chat (<code>••••0402</code> style).</li>
+        <li>Withdrawals require an explicit Telegram command from you.</li>
+      </ul>
+<pre><span class="g">/fund 2500 usdc</span>
+<span class="c">→ card active · balance synced</span>
+</pre>
+    </section>
+
+    <section class="doc-section" id="guardrails">
+      <h2>Guardrails</h2>
+      <p>Autonomy sits inside fences you define. Rhino will not request overrides for hard limits.</p>
+      <ul>
+        <li><strong>Daily spend cap</strong> — absolute max the agent can commit per day.</li>
+        <li><strong>Per-trade limit</strong> — hard ceiling on a single order.</li>
+        <li><strong>Approval threshold</strong> — trades above this pause for <code>/approve</code> or <code>/skip</code>.</li>
+        <li><strong>Kill switch</strong> — <code>/kill</code> halts all trading immediately.</li>
+      </ul>
+<pre><span class="g">/limit 300/day</span>
+<span class="g">/limit trade 150</span>
+<span class="g">/approve threshold 100</span>
+<span class="g">/kill on</span>
+</pre>
+    </section>
+
+    <section class="doc-section" id="commands">
+      <h2>Telegram commands</h2>
+      <div class="cmd-grid">
+        <div class="cmd-row"><span class="cmd">/status</span><span class="desc">Open positions, card balance, guardrail hits</span></div>
+        <div class="cmd-row"><span class="cmd">/persona …</span><span class="desc">View, set, or create a persona</span></div>
+        <div class="cmd-row"><span class="cmd">/fund …</span><span class="desc">Add capital to the agent card</span></div>
+        <div class="cmd-row"><span class="cmd">/limit …</span><span class="desc">Set daily and per-trade caps</span></div>
+        <div class="cmd-row"><span class="cmd">/approve</span><span class="desc">Allow a paused order above threshold</span></div>
+        <div class="cmd-row"><span class="cmd">/skip</span><span class="desc">Dismiss a paused order</span></div>
+        <div class="cmd-row"><span class="cmd">/kill</span><span class="desc">Emergency halt — trading stops now</span></div>
+        <div class="cmd-row"><span class="cmd">/digest</span><span class="desc">Force a P&amp;L and activity summary</span></div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="x402">
+      <h2>x402 payments</h2>
+      <p><strong>x402</strong> is the HTTP-native payment standard Rhino uses for data and execution costs. When a priced endpoint returns <code>402 Payment Required</code>, the agent pays in stablecoin and retries — no API keys sitting in config.</p>
+      <ol>
+        <li>Agent calls a priced resource.</li>
+        <li>Server responds <code>402</code> with payment requirements.</li>
+        <li>Rhino attaches an <code>X-PAYMENT</code> header (e.g. EIP-3009 USDC).</li>
+        <li>Request settles on-chain and returns <code>200</code> — usually in a couple of seconds.</li>
+        <li>The settlement line is logged to your Telegram audit channel.</li>
+      </ol>
+<pre><span class="c">// simplified handshake</span>
+POST /chain/execute
+status: <span class="g">402 Payment Required</span>
+X-PAYMENT: "eip3009:0x9f…c402"
+status: <span class="g">200 OK — order filled</span>
+</pre>
+      <p>Read more on the landing page under <a class="inline" href="index.html#technical">Under the hood</a>.</p>
+    </section>
+
+    <section class="doc-section" id="chain">
+      <h2>Robinhood Chain</h2>
+      <p>Trades settle on Robinhood Chain so positions, cash, and history remain yours — not trapped inside an opaque broker wallet. Rhino talks to Trading and Banking surfaces over MCP, then posts fills and payments back into Telegram as they land.</p>
+      <div class="callout">
+        <div class="t">Not affiliated</div>
+        <p>Rhino is an independent agent. It is not affiliated with Robinhood Markets, Inc.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="security">
+      <h2>Security model</h2>
+      <ul>
+        <li>Dedicated card and account — no access to the rest of your portfolio.</li>
+        <li>Hard spend limits the agent cannot raise.</li>
+        <li>One-tap kill switch in Telegram.</li>
+        <li>Every trade and payment writes an immutable audit line you can read in chat.</li>
+      </ul>
+      <p>See also the product overview on <a class="inline" href="index.html#security">trust by design</a>.</p>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details>
+          <summary>Can Rhino spend more than I funded?</summary>
+          <p>No. The agent only spends from its dedicated card balance and never past the daily / per-trade caps you set.</p>
+        </details>
+        <details>
+          <summary>What happens when a trade is above my approval threshold?</summary>
+          <p>Rhino posts a preview to Telegram and waits. Reply <code>/approve</code> to continue or <code>/skip</code> to dismiss. Nothing fills until you answer.</p>
+        </details>
+        <details>
+          <summary>Do I need to keep Telegram open?</summary>
+          <p>No. Rhino runs continuously. Open Telegram when you want status, approvals, or to hit the kill switch.</p>
+        </details>
+        <details>
+          <summary>Is this financial advice?</summary>
+          <p>No. Rhino executes the rules you configure. Trading memecoins and stock tokens can result in total loss of funded capital.</p>
+        </details>
+      </div>
+    </section>
+
+    <div class="docs-cta">
+      <div>
+        <h3>Ready to deploy?</h3>
+        <p>Open Telegram, fund a card, and let Rhino work inside your guardrails.</p>
+      </div>
+      <div class="actions">
+        <a href="index.html#cta" class="btn btn-lime">Deploy an agent</a>
+        <a href="index.html" class="btn btn-line">Back to home</a>
+      </div>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <div class="foot-meta">
+    <span>© 2026 Rhino · Docs</span>
+    <span><a href="index.html">Home</a> · Built on Robinhood Chain · Settled via x402</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const headerH = () => document.querySelector('header')?.offsetHeight || 72;
+  const tocBtn = document.getElementById('tocBtn');
+  const mobileToc = document.getElementById('mobileToc');
+  const sections = [...document.querySelectorAll('.doc-section[id]')];
+  const tocLinks = [...document.querySelectorAll('.toc a, .mobile-toc a')];
+
+  function setToc(open) {
+    document.body.classList.toggle('toc-open', open);
+    mobileToc.hidden = !open;
+    tocBtn?.setAttribute('aria-label', open ? 'Close docs menu' : 'Open docs menu');
+  }
+  tocBtn?.addEventListener('click', () => setToc(!document.body.classList.contains('toc-open')));
+  mobileToc?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setToc(false)));
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href');
+      const target = id && document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - (headerH() + 16);
+      window.scrollTo({ top, behavior: 'smooth' });
+      history.replaceState(null, '', id);
+    });
+  });
+
+  function setActive() {
+    let current = sections[0]?.id;
+    const y = window.scrollY + headerH() + 48;
+    for (const s of sections) {
+      if (s.offsetTop <= y) current = s.id;
+    }
+    tocLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+
+  // Deep-link to hash on load
+  if (location.hash) {
+    const t = document.querySelector(location.hash);
+    if (t) {
+      requestAnimationFrame(() => {
+        const top = t.getBoundingClientRect().top + window.scrollY - (headerH() + 16);
+        window.scrollTo({ top, behavior: 'auto' });
+      });
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
