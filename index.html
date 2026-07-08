@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <title>Rhino — Agentic trading for Robinhood Chain</title>
 <meta name="description" content="Rhino is an agentic trader that lives in Telegram, holds its own funded card, and executes on Robinhood Chain around the clock.">
 <link rel="icon" href="favicon-64.png" type="image/png" sizes="64x64">
@@ -33,7 +33,12 @@
     --font-mono: 'Courier New', Courier, monospace;
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; background:var(--bg); }
+  html{
+    scroll-behavior:smooth; background:var(--bg);
+    overflow-x:hidden; max-width:100%;
+    overscroll-behavior-x:none;
+    touch-action:pan-y;
+  }
   @supports (scroll-behavior: smooth){
     html{ scroll-behavior:smooth; }
   }
@@ -42,6 +47,9 @@
     font-family:var(--font-body);
     font-size:16.5px; line-height:1.6; -webkit-font-smoothing:antialiased;
     overflow-x:hidden; font-weight:400;
+    width:100%; max-width:100%; position:relative;
+    overscroll-behavior-x:none;
+    touch-action:pan-y;
   }
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
@@ -62,7 +70,8 @@
 
   a{ color:inherit; text-decoration:none; }
   .wrap{ max-width:1280px; margin:0 auto; padding:0 40px; }
-  section{ position:relative; }
+  section{ position:relative; overflow-x:clip; }
+  main{ overflow-x:clip; width:100%; max-width:100%; }
   img{ max-width:100%; display:block; }
   h1,h2,h3,h4{
     font-family:var(--font-display); font-weight:400; letter-spacing:-0.01em; line-height:1.1;
@@ -94,6 +103,13 @@
     box-shadow:
       0 10px 28px -8px rgba(0,0,0,0.9),
       0 22px 48px -18px rgba(0,0,0,0.75),
+      0 2px 0 rgba(204,255,2,0.14);
+  }
+  header.menu-open{
+    background:#0a0a0a;
+    backdrop-filter:none; -webkit-backdrop-filter:none;
+    box-shadow:
+      0 10px 28px -8px rgba(0,0,0,0.9),
       0 2px 0 rgba(204,255,2,0.14);
   }
   nav{
@@ -180,20 +196,53 @@
   header.menu-open .menu-btn span::after{ top:0; transform:rotate(-45deg); }
 
   .mobile-nav{
-    display:none; position:fixed; inset:var(--header-h) 0 0 0; z-index:99;
-    background:rgba(10,10,10,0.98); padding:28px 22px 40px;
-    flex-direction:column; gap:8px;
-    transform:translateY(-8px); opacity:0; pointer-events:none;
-    transition:opacity .35s var(--ease), transform .35s var(--ease);
+    display:flex; flex-direction:column; gap:4px;
+    position:fixed; top:var(--header-h); left:0; right:0; bottom:0;
+    z-index:98;
+    background:#0a0a0a;
+    padding:28px 22px max(40px, env(safe-area-inset-bottom));
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    transform:translateY(-10px);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:
+      opacity .32s var(--ease),
+      transform .32s var(--ease),
+      visibility .32s;
+    border-top:1px solid var(--line-soft);
+    box-shadow:
+      inset 0 1px 0 rgba(204,255,2,0.06),
+      0 24px 60px rgba(0,0,0,0.55);
   }
-  header.menu-open .mobile-nav{ display:flex; opacity:1; transform:translateY(0); pointer-events:auto; }
-  .mobile-nav a{
-    font-size:22px; padding:14px 4px; border-bottom:1px solid var(--line-soft); color:var(--ink-soft);
-    transition:color .25s var(--ease); font-family:var(--font-display);
+  .mobile-nav[hidden]{ display:flex !important; }
+  header.menu-open .mobile-nav{
+    opacity:1; visibility:visible; pointer-events:auto;
+    transform:translateY(0);
   }
-  .mobile-nav a:hover, .mobile-nav a:focus-visible{ color:var(--lime); outline:none; }
-  .mobile-nav .mobile-cta{ margin-top:24px; display:flex; flex-direction:column; gap:12px; }
+  .mobile-nav a:not(.btn){
+    font-size:clamp(22px, 6vw, 28px); padding:16px 6px;
+    border-bottom:1px solid var(--line-soft); color:var(--ink-soft);
+    transition:color .25s var(--ease), padding-left .25s var(--ease);
+    font-family:var(--font-display); letter-spacing:-0.01em;
+  }
+  .mobile-nav a:not(.btn):hover,
+  .mobile-nav a:not(.btn):focus-visible{
+    color:var(--lime); outline:none; padding-left:12px;
+  }
+  .mobile-nav .mobile-cta{
+    margin-top:28px; display:flex; flex-direction:column; gap:12px;
+    padding-top:8px;
+  }
   .mobile-nav .btn{ width:100%; justify-content:center; }
+  .mobile-nav .btn-line{
+    background:#141414; border-color:rgba(245,244,240,0.22); color:var(--ink);
+  }
+  .mobile-nav .btn-line:hover,
+  .mobile-nav .btn-line:focus-visible{
+    background:#1c1c1c; border-color:var(--ink);
+  }
+  header.menu-open .menu-btn{
+    background:#141414; border-color:rgba(245,244,240,0.28);
+  }
 
   .btn{
     display:inline-flex; align-items:center; justify-content:center; gap:8px;
@@ -280,11 +329,11 @@
     border-top:1px solid var(--line-soft);
     background:rgba(10,10,10,0.72); overflow:hidden; padding:16px 0;
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    width:100%;
+    width:100%; max-width:100%;
   }
-  .ticker-rail{ display:flex; align-items:center; gap:0; max-width:100%; }
-  .ticker-viewport{ flex:1; overflow:hidden; min-width:0; }
-  .ticker-track{ display:flex; width:max-content; animation:ticker 42s linear infinite; will-change:transform; }
+  .ticker-rail{ display:flex; align-items:center; gap:0; max-width:100%; overflow:hidden; }
+  .ticker-viewport{ flex:1; overflow:hidden; min-width:0; max-width:100%; }
+  .ticker-track{ display:flex; width:max-content; max-width:none; animation:ticker 42s linear infinite; will-change:transform; }
   .ticker-outer:hover .ticker-track{ animation-play-state:paused; }
   @keyframes ticker{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
   .tick{
@@ -507,15 +556,17 @@
     .wrap{ padding:0 18px; }
     nav{ padding:0 18px; }
     .nav-cta .btn{ padding:10px 16px; font-size:13px; }
-    .hero{ min-height:100vh; min-height:100dvh; padding-top:calc(var(--header-h) + 12px); }
+    .hero{ min-height:100vh; min-height:100dvh; padding-top:calc(var(--header-h) + 12px); overflow-x:clip; }
     .hero-actions{ flex-direction:column; width:100%; align-items:center; }
     .hero-actions .btn{ width:100%; }
     .hero-actions .hero-tg{ margin:4px 0; }
+    .hero-rh{ transform:translateX(10px); }
     .persona-grid, .security-grid, .foot-grid{ grid-template-columns:1fr; }
     .task-status{ display:none; }
     .task-row{ padding:16px 14px; }
     .subtask-list{ margin:0 14px 0 36px; }
     .cta-actions .btn{ width:100%; max-width:360px; }
+    .ticker-live{ padding:0 12px 0 16px; }
   }
 </style>
 </head>
