@@ -169,8 +169,25 @@
   .foot-social{
     display:flex; align-items:center; gap:14px; margin-top:18px;
   }
-  .foot-social a{ display:inline-flex; }
+  .foot-social a{ display:inline-flex; align-items:center; justify-content:center; line-height:0; }
   .foot-social .tg-icon-img{ width:56px; height:56px; }
+  .social-icon{
+    width:44px; height:44px; border-radius:12px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:#141414; border:1px solid var(--line);
+    color:var(--ink);
+    transition:transform .3s var(--ease), border-color .3s var(--ease), background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease);
+    box-shadow:0 8px 18px rgba(0,0,0,0.35);
+  }
+  .social-icon svg{ width:18px; height:18px; display:block; }
+  .social-icon:hover, .social-icon:focus-visible{
+    transform:translateY(-2px); outline:none;
+    border-color:rgba(204,255,2,0.45); color:var(--lime);
+    background:#1a1a1a;
+    box-shadow:0 10px 22px rgba(0,0,0,0.45), 0 0 18px rgba(204,255,2,0.18);
+  }
+  .foot-social .social-icon{ width:48px; height:48px; border-radius:14px; }
+  .foot-social .social-icon svg{ width:20px; height:20px; }
   .navlinks{ display:flex; gap:32px; align-items:center; }
   .navlinks a{
     font-size:14px; color:var(--ink-soft); letter-spacing:0.01em; position:relative; padding-bottom:2px;
@@ -614,7 +631,7 @@
       <div class="hero-actions reveal">
         <a href="#cta" class="btn btn-lime btn-lg">Deploy an agent →</a>
         <div class="hero-tg">
-          <a href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Open Rhino on Telegram">
+          <a href="https://t.me/rhinoagent" target="_blank" rel="noopener noreferrer" aria-label="Open Rhino on Telegram">
             <img class="tg-icon-img" src="tele-logo.png" alt="Telegram" width="68" height="68">
           </a>
         </div>
@@ -906,7 +923,7 @@
       <h2 class="reveal">Give it a persona.<br>Give it a card. Walk away.</h2>
       <p class="reveal">Rhino sets up entirely in Telegram — no dashboard to babysit, no tab to keep open.</p>
       <div class="cta-actions reveal">
-        <a href="https://t.me/" class="btn btn-lime btn-lg" target="_blank" rel="noopener noreferrer">Open @rhino_agent →</a>
+        <a href="https://t.me/rhinoagent" class="btn btn-lime btn-lg" target="_blank" rel="noopener noreferrer">Open @rhinoagent →</a>
         <a href="docs.html" class="btn btn-line btn-lg">Read the docs</a>
       </div>
     </div>
@@ -921,8 +938,11 @@
         <a href="#top" class="logo" aria-label="Rhino"><img class="logo-img foot" src="rhino.png" alt="Rhino" width="120" height="120"></a>
         <p>Agentic trading for Robinhood Chain. Built for people who want a trader, not a dashboard.</p>
         <div class="foot-social">
-          <a href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+          <a href="https://t.me/rhinoagent" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
             <img class="tg-icon-img" src="tele-logo.png" alt="Telegram" width="56" height="56">
+          </a>
+          <a class="social-icon" href="https://x.com/RhinoAgentRH" target="_blank" rel="noopener noreferrer" aria-label="Rhino on X">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
         </div>
       </div>
@@ -942,7 +962,7 @@
       </div>
       <div class="foot-col">
         <h4>Company</h4>
-        <a href="https://x.com/" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+        <a href="https://x.com/RhinoAgentRH" target="_blank" rel="noopener noreferrer">X / Twitter</a>
         <a href="#cta">Status</a>
         <a href="#cta">Contact</a>
       </div>
